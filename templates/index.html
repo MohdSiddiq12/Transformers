@@ -53,7 +53,6 @@
     </style>
 
     <script>
-        // JavaScript code
         async function predictNextWord() {
             const inputSentence = document.getElementById('inputSentence').value;
             const response = await fetch('/predict', {
@@ -63,8 +62,12 @@
                 },
                 body: `sentence=${encodeURIComponent(inputSentence)}`,
             });
-            const data = await response.json();
-            document.getElementById('output').innerText = `Next word: ${data.next_word}`;
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('output').innerText = `Next word: ${data.next_word}`;
+            } else {
+                document.getElementById('output').innerText = 'Error: Could not predict next word';
+            }
         }
     </script>
 </head>
