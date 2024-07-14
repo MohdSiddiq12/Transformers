@@ -61,51 +61,37 @@
     </div>
 
     <script>
-        const HUGGING_FACE_API_URL = 'https://api-inference.huggingface.co/models/gpt2';
-        const HUGGING_FACE_API_KEY = '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'; // Make sure to keep this secure
+        const PREDICT_API_URL = '/predict'; // Replace this with your deployed app's URL if different
 
-        async function predictNextWord() {
-            const inputSentence = document.getElementById('inputSentence').value;
-            const outputElement = document.getElementById('output');
+async function predictNextWord() {
+    const inputSentence = document.getElementById('inputSentence').value;
+    const outputElement = document.getElementById('output');
 
-            if (!inputSentence) {
-                outputElement.innerText = 'Error: No input sentence provided';
-                return;
-            }
+    if (!inputSentence) {
+        outputElement.innerText = 'Error: No input sentence provided';
+        return;
+    }
 
-            try {
-                const response = await fetch(HUGGING_FACE_API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${HUGGING_FACE_API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        inputs: inputSentence,
-                        parameters: {
-                            max_new_tokens: 1,
-                            return_full_text: false
-                        }
-                    })
-                });
+    try {
+        const response = await fetch(PREDICT_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ sentence: inputSentence })
+        });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                if (Array.isArray(result) && result.length > 0) {
-                    const predictedText = result[0].generated_text;
-                    const words = predictedText.split(' ');
-                    const nextWord = words[words.length - 1];
-                    outputElement.innerText = `Next word: ${nextWord}`;
-                } else {
-                    outputElement.innerText = 'Error: Unexpected response format';
-                }
-            } catch (error) {
-                outputElement.innerText = `Error: ${error.message}`;
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const result = await response.json();
+        outputElement.innerText = `Next word: ${result.next_word}`;
+    } catch (error) {
+        outputElement.innerText = `Error: ${error.message}`;
+    }
+}
+
     </script>
 </body>
 </html>
