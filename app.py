@@ -1,8 +1,7 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 import torch
 import functools
-import asyncio
 
 app = Flask(__name__)
 
@@ -21,16 +20,11 @@ def predict_next_word(input_sentence):
     predicted_word = tokenizer.decode(predicted_token_id)
     return predicted_word
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
 @app.route('/predict', methods=['POST'])
-async def predict():
+def predict():
     input_sentence = request.form['sentence']
-    loop = asyncio.get_event_loop()
-    predicted_word = await loop.run_in_executor(None, predict_next_word, input_sentence)
+    predicted_word = predict_next_word(input_sentence)
     return jsonify({'next_word': predicted_word})
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
