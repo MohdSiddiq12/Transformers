@@ -55,12 +55,13 @@
     <script>
         async function predictNextWord() {
     const inputSentence = document.getElementById('inputSentence').value;
-    const API_URL = 'https://api-inference.huggingface.co/models/distilgpt2';
+    const API_URL = 'https://api-inference.huggingface.co/models/gpt2';
+    const API_KEY = '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';
 
     const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
-            'Authorization': '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',
+            'Authorization': `Bearer ${API_KEY}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -71,8 +72,14 @@
         }),
     });
 
+    if (!response.ok) {
+        const errorData = await response.json();
+        document.getElementById('output').innerText = `Error: ${errorData.error}`;
+        return;
+    }
+
     const result = await response.json();
-    const predicted_word = result[0]?.generated_text?.split(inputSentence)[1].trim();
+    const predicted_word = result[0]?.generated_text?.split(inputSentence)[1]?.trim();
     document.getElementById('output').innerText = `Next word: ${predicted_word}`;
 }
 
