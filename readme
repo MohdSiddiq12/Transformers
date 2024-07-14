@@ -1,82 +1,63 @@
-# 🚀 Transformer Architecture
-
+🚀 Transformer Architecture
 <p align="center">
   <img src="https://github.com/user-attachments/assets/2fd80af4-1502-4c98-8242-c21c09195068" alt="Transformer Model Architecture" width="600">
 </p>
-
 <p align="center">
   <em>Revolutionizing Natural Language Processing with the Transformer Model</em>
 </p>
-
-## 📚 Table of Contents
-
-- [🎨 Input Processing](#-input-processing)
-- [🏗️ Encoder](#%EF%B8%8F-encoder)
-- [🧠 Decoder](#-decoder)
-- [🎉 Output Generation](#-output-generation)
-- [🔄 Data Flow](#-data-flow)
-
-## 🎨 Input Processing
-
-### 📊 Input Embeddings
-- Transform input tokens into fixed-size vectors
-- Map vocabulary words to high-dimensional space
-
-### 🔢 Positional Encoding
-- Inject sequence order information
-- Utilize sine and cosine functions of varying frequencies
-
-## 🏗️ Encoder
-
+📚 Table of Contents
+🎨 Input Processing
+🏗️ Encoder
+🧠 Decoder
+🎉 Output Generation
+🔄 Data Flow
+🎨 Input Processing
+📊 Input Embeddings
+Transform input tokens into fixed-size vectors
+Map vocabulary words to high-dimensional space
+🔢 Positional Encoding
+Inject sequence order information
+Utilize sine and cosine functions of varying frequencies
+🏗️ Encoder
 The Encoder is a stack of identical layers, each featuring:
 
-### 1. 👁️ Multi-Head Self-Attention Mechanism
+1. 👁️ Multi-Head Self-Attention Mechanism
+🔍 Scaled Dot-Product Attention
+Compute attention scores with queries (Q), keys (K), and values (V)
+Scale scores and apply softmax for weights
+Output weighted sum of values
+🔀 Multi-Head Attention
+Employ multiple attention heads to capture diverse input aspects
+2. 🧮 Feed Forward Neural Network
+Apply dual linear transformations with ReLU activation
+💡 Each sub-layer includes a residual connection and layer normalization
 
-#### 🔍 Scaled Dot-Product Attention
-- Compute attention scores with queries (Q), keys (K), and values (V)
-- Scale scores and apply softmax for weights
-- Output weighted sum of values
-
-#### 🔀 Multi-Head Attention
-- Employ multiple attention heads to capture diverse input aspects
-
-### 2. 🧮 Feed Forward Neural Network
-- Apply dual linear transformations with ReLU activation
-
-> 💡 Each sub-layer includes a residual connection and layer normalization
-
-## 🧠 Decoder
-
+🧠 Decoder
 The Decoder mirrors the Encoder's structure with additional components:
 
-### 1. 🎭 Masked Multi-Head Self-Attention
-- Similar to encoder's self-attention, but masks future positions
+1. 🎭 Masked Multi-Head Self-Attention
+Similar to encoder's self-attention, but masks future positions
+2. 🔗 Multi-Head Attention (encoder-decoder attention)
+Attend to encoder's output and previous decoder layer
+3. 🧮 Feed Forward Neural Network
+Identical to the encoder's feed-forward network
+💡 Each sub-layer includes a residual connection and layer normalization
 
-### 2. 🔗 Multi-Head Attention (encoder-decoder attention)
-- Attend to encoder's output and previous decoder layer
-
-### 3. 🧮 Feed Forward Neural Network
-- Identical to the encoder's feed-forward network
-
-> 💡 Each sub-layer includes a residual connection and layer normalization
-
-## 🎉 Output Generation
-
-### 📐 Final Linear Layer
-- Project decoder output onto vocabulary space
-
-### 🌟 Softmax Layer
-- Convert linear output to word probabilities
-
-## 🔄 Data Flow
-
-1. 🔤 Tokenize, embed, and add positional encoding to input
-2. 🏗️ Process through multiple encoder layers
-3. 🧠 Pass output sequence through decoder layers
-4. 🎉 Generate final output via linear transformation and softmax
-
----
-
+🎉 Output Generation
+📐 Final Linear Layer
+Project decoder output onto vocabulary space
+🌟 Softmax Layer
+Convert linear output to word probabilities
+🔄 Data Flow
+🔤 Tokenize, embed, and add positional encoding to input
+🏗️ Process through multiple encoder layers
+🧠 Pass output sequence through decoder layers
+🎉 Generate final output via linear transformation and softmax
 <p align="center">
   <strong>The Transformer's Superpower</strong>: Capturing long-range dependencies and enabling parallel computations for efficient large-scale training.
 </p>
+
+
+
+
+
