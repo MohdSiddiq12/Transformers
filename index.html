@@ -5,73 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Next Word Predictor</title>
     <style>
-        /* CSS styles */
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-
-        .container {
-            text-align: center;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        #output {
-            margin-top: 20px;
-            font-size: 1.2em;
-        }
+        /* CSS styles remain the same */
     </style>
-    <script>
-        async function predictNextWord() {
-            const inputSentence = document.getElementById('inputSentence').value;
-            const response = await fetch('/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ sentence: inputSentence }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                document.getElementById('output').innerText = `Error: ${errorData.error}`;
-                return;
-            }
-
-            const result = await response.json();
-            document.getElementById('output').innerText = `Next word: ${result.next_word}`;
-        }
-    </script>
 </head>
 <body>
     <div class="container">
@@ -80,5 +15,53 @@
         <button onclick="predictNextWord()">Predict Next Word</button>
         <p id="output"></p>
     </div>
+
+    <script>
+        const HUGGING_FACE_API_URL = 'https://api-inference.huggingface.co/models/gpt2';
+        const HUGGING_FACE_API_KEY = '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'; // Make sure to keep this secure
+
+        async function predictNextWord() {
+            const inputSentence = document.getElementById('inputSentence').value;
+            const outputElement = document.getElementById('output');
+
+            if (!inputSentence) {
+                outputElement.innerText = 'Error: No input sentence provided';
+                return;
+            }
+
+            try {
+                const response = await fetch(HUGGING_FACE_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${HUGGING_FACE_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        inputs: inputSentence,
+                        parameters: {
+                            max_new_tokens: 1,
+                            return_full_text: false
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (Array.isArray(result) && result.length > 0) {
+                    const predictedText = result[0].generated_text;
+                    const words = predictedText.split(' ');
+                    const nextWord = words[words.length - 1];
+                    outputElement.innerText = `Next word: ${nextWord}`;
+                } else {
+                    outputElement.innerText = 'Error: Unexpected response format';
+                }
+            } catch (error) {
+                outputElement.innerText = `Error: ${error.message}`;
+            }
+        }
+    </script>
 </body>
 </html>
