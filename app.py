@@ -1,45 +1,40 @@
+# app.py
 from flask import Flask, request, jsonify, render_template
-import requests
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+import torch
+import asyncio
 
 app = Flask(__name__)
 
-API_URL = "https://api-inference.huggingface.co/models/openai-community/gpt"
-API_KEY = "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"  # Replace with your actual API key
-HEADERS = {"Authorization": f"Bearer {API_KEY}"}
+# Load pre-trained model and tokenizer once when the application starts
+tokenizer = GPT2Tokenizer.from_pretrained("distilgpt2")
+model = GPT2LMHeadModel.from_pretrained("distilgpt2")
 
-def query(payload):
-    response = requests.post(API_URL, headers=HEADERS, json=payload)
-    return response.json()
+def predict_next_word(input_sentence):
+    input_ids = tokenizer.encode(input_sentence, return_tensors='pt')
+    with torch.no_grad():
+        outputs = model(input_ids)
+    next_token_logits = outputs.logits[:, -1, :]
+    probabilities = torch.softmax(next_token_logits, dim=-1)
+    predicted_token_id = torch.argmax(probabilities, dim=-1)
+    predicted_word = tokenizer.decode(predicted_token_id)
+    return predicted_word
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
-def predict():
-    input_sentence = request.json.get('sentence')
-    if not input_sentence:
-        return jsonify({'error': 'No input sentence provided'}), 400
-
-    payload = {
-        "inputs": input_sentence,
-        "parameters": {
-            "max_new_tokens": 1,
-            "return_full_text": False
-        }
-    }
-
+async def predict():
     try:
-        result = query(payload)
-        if isinstance(result, list) and len(result) > 0:
-            predicted_text = result[0]['generated_text']
-            words = predicted_text.split()
-            predicted_word = words[-1] if words else ""
-            return jsonify({'next_word': predicted_word})
-        else:
-            return jsonify({'error': 'Unexpected response format'}), 500
+        input_sentence = request.form['sentence']
+        loop = asyncio.get_event_loop()
+        predicted_word = await loop.run_in_executor(None, predict_next_word, input_sentence)
+        return jsonify({'next_word': predicted_word})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # Log the error for debugging
+        app.logger.error(f"Error occurred: {e}")
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
