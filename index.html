@@ -54,21 +54,28 @@
 
     <script>
         async function predictNextWord() {
-            const inputSentence = document.getElementById('inputSentence').value;
-            const response = await fetch('/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `sentence=${encodeURIComponent(inputSentence)}`,
-            });
-            if (response.ok) {
-                const data = await response.json();
-                document.getElementById('output').innerText = `Next word: ${data.next_word}`;
-            } else {
-                document.getElementById('output').innerText = 'Error: Could not predict next word';
-            }
-        }
+    const inputSentence = document.getElementById('inputSentence').value;
+    const API_URL = 'https://api-inference.huggingface.co/models/distilgpt2';
+
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Authorization': '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',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            inputs: inputSentence,
+            parameters: {
+                max_new_tokens: 1,
+            },
+        }),
+    });
+
+    const result = await response.json();
+    const predicted_word = result[0]?.generated_text?.split(inputSentence)[1].trim();
+    document.getElementById('output').innerText = `Next word: ${predicted_word}`;
+}
+
     </script>
 </head>
 <body>
