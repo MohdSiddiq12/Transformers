@@ -5,7 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Next Word Predictor</title>
     <style>
-        /* CSS styles remain the same */
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-left: 10px;
+        }
+        p {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +57,10 @@
                 }
 
                 const result = await response.json();
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+
                 outputElement.innerText = `Next word: ${result.next_word}`;
             } catch (error) {
                 outputElement.innerText = `Error: ${error.message}`;

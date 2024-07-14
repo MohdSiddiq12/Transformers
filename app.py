@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import requests
 
 app = Flask(__name__)
 
-API_URL = "https://api-inference.huggingface.co/models/openai-community/gpt2"
+API_URL = "https://api-inference.huggingface.co/models/openai-community/gpt"
 API_KEY = "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"  # Replace with your actual API key
 HEADERS = {"Authorization": f"Bearer {API_KEY}"}
 
