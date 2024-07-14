@@ -1,13 +1,16 @@
 from flask import Flask, request, jsonify, render_template
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 import torch
+import functools
+import asyncio
 
 app = Flask(__name__)
 
 # Load pre-trained model and tokenizer once when the application starts
-tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-model = GPT2LMHeadModel.from_pretrained("gpt2")
+tokenizer = GPT2Tokenizer.from_pretrained("distilgpt2")
+model = GPT2LMHeadModel.from_pretrained("distilgpt2")
 
+@functools.lru_cache(maxsize=128)
 def predict_next_word(input_sentence):
     input_ids = tokenizer.encode(input_sentence, return_tensors='pt')
     with torch.no_grad():
@@ -23,10 +26,11 @@ def home():
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
-def predict():
+async def predict():
     input_sentence = request.form['sentence']
-    predicted_word = predict_next_word(input_sentence)
+    loop = asyncio.get_event_loop()
+    predicted_word = await loop.run_in_executor(None, predict_next_word, input_sentence)
     return jsonify({'next_word': predicted_word})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
