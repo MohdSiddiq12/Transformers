@@ -1,56 +1,70 @@
-### Transformers Architecture
+# Transformer Architecture
 
-![The-Transformer-model-architecture](https://github.com/user-attachments/assets/2fd80af4-1502-4c98-8242-c21c09195068)
+![Transformer Model Architecture](https://github.com/user-attachments/assets/2fd80af4-1502-4c98-8242-c21c09195068)
 
-Transformer Model Architecture
-A Transformer model consists of an Encoder-Decoder structure. Both the Encoder and Decoder are composed of several layers. Here's a detailed explanation of each component and layer in the Transformer model:
+The Transformer model, based on the Encoder-Decoder structure, has revolutionized natural language processing tasks. This README provides an overview of its architecture and components.
 
-1. Input Embeddings and Positional Encoding
-Input Embeddings: The input tokens are converted into vectors of fixed size using embeddings. Each word in the vocabulary is mapped to a high-dimensional space.
-Positional Encoding: Since the Transformer model does not inherently understand the order of the sequence, positional encodings are added to the embeddings to provide information about the position of each word in the sequence. These encodings use sine and cosine functions of different frequencies.
-2. Encoder
-The Encoder consists of multiple identical layers. Each layer has two main sub-layers:
+## Table of Contents
+1. [Input Processing](#input-processing)
+2. [Encoder](#encoder)
+3. [Decoder](#decoder)
+4. [Output Generation](#output-generation)
 
-Multi-Head Self-Attention Mechanism
-Feed Forward Neural Network
-Each sub-layer has a residual connection around it followed by layer normalization.
+## Input Processing
 
-Multi-Head Self-Attention Mechanism:
+### Input Embeddings
+- Convert input tokens into fixed-size vectors
+- Map each word in the vocabulary to a high-dimensional space
 
-Scaled Dot-Product Attention:
-Queries (Q), Keys (K), and Values (V) are derived from the input embeddings.
-The attention scores are computed as the dot product of the queries and keys, scaled by the square root of the dimension of the keys.
-These scores are passed through a softmax function to obtain the attention weights.
-The output is a weighted sum of the values, based on the attention weights.
-Multi-Head Attention: Instead of performing a single attention function, the model uses multiple attention heads to capture different aspects of the input. Each head performs its own attention function, and the results are concatenated and linearly transformed.
-Feed Forward Neural Network:
+### Positional Encoding
+- Add information about word position in the sequence
+- Use sine and cosine functions of different frequencies
 
-A fully connected feed-forward network is applied to each position separately and identically. It consists of two linear transformations with a ReLU activation in between.
-3. Decoder
-The Decoder also consists of multiple identical layers, each containing three main sub-layers:
+## Encoder
 
-Masked Multi-Head Self-Attention Mechanism
-Multi-Head Attention Mechanism (enc-dec attention)
-Feed Forward Neural Network
-Like the encoder, each sub-layer in the decoder has a residual connection around it followed by layer normalization.
+The Encoder consists of multiple identical layers, each containing:
 
-Masked Multi-Head Self-Attention Mechanism:
+### 1. Multi-Head Self-Attention Mechanism
+- **Scaled Dot-Product Attention**
+  - Compute attention scores using queries (Q), keys (K), and values (V)
+  - Scale scores and apply softmax to obtain weights
+  - Output weighted sum of values
+- **Multi-Head Attention**
+  - Use multiple attention heads to capture different aspects of input
 
-Similar to the encoder’s self-attention mechanism, but with an additional masking step to prevent positions from attending to subsequent positions. This is done to ensure that predictions for a position can depend only on known outputs at earlier positions.
-Multi-Head Attention Mechanism (enc-dec attention):
+### 2. Feed Forward Neural Network
+- Apply two linear transformations with ReLU activation
 
-This layer performs multi-head attention over the encoder’s output and the decoder’s previous layer output. This helps the decoder focus on the relevant parts of the input sequence.
-Feed Forward Neural Network:
+> Note: Each sub-layer has a residual connection and layer normalization
 
-Identical to the feed-forward network in the encoder.
-4. Final Linear and Softmax Layer
-Linear Transformation: The decoder’s output is passed through a linear transformation to project it into the vocabulary space.
-Softmax Layer: The linear transformation’s output is passed through a softmax function to obtain the probabilities of each word in the vocabulary. The word with the highest probability is selected as the output.
-Putting It All Together
-The overall flow of data through the Transformer model is as follows:
+## Decoder
 
-Input Sequence: The input sequence is tokenized and passed through the input embedding layer and positional encoding.
-Encoder: The embedded input sequence is passed through multiple encoder layers, each consisting of multi-head self-attention and feed-forward neural network sub-layers.
-Decoder: The output sequence (shifted right) is passed through the decoder, which also consists of masked multi-head self-attention, encoder-decoder attention, and feed-forward neural network sub-layers.
-Output: The final decoder layer outputs are passed through a linear transformation and softmax layer to predict the next word in the sequence.
-The Transformer model is powerful due to its ability to capture long-range dependencies and parallelize computations, making it highly efficient for training on large datasets.
+The Decoder also consists of multiple identical layers, each containing:
+
+### 1. Masked Multi-Head Self-Attention Mechanism
+- Similar to encoder's self-attention, but with masking to prevent attending to future positions
+
+### 2. Multi-Head Attention Mechanism (encoder-decoder attention)
+- Perform attention over encoder's output and decoder's previous layer output
+
+### 3. Feed Forward Neural Network
+- Identical to the encoder's feed-forward network
+
+> Note: Each sub-layer has a residual connection and layer normalization
+
+## Output Generation
+
+### Final Linear Layer
+- Project decoder output into vocabulary space
+
+### Softmax Layer
+- Convert linear output to probabilities for each word in vocabulary
+
+## Data Flow
+
+1. Tokenize and embed input sequence, add positional encoding
+2. Pass through multiple encoder layers
+3. Process output sequence through decoder layers
+4. Generate final output through linear transformation and softmax
+
+The Transformer's power lies in its ability to capture long-range dependencies and parallelize computations, making it highly efficient for large-scale training.
